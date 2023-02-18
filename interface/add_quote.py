@@ -1,19 +1,19 @@
 import json
 import os
 
-import add_quote_interface
-from design import stylesheet
+from designer.add_quote_interface import Ui_Form
+from designer.design import stylesheet
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QInputDialog
 
 
-class Quote(QMainWindow, add_quote_interface.Ui_Form):
+class Quote(QMainWindow, Ui_Form):
     def __init__(self, book_id):
         super().__init__()
-        self.setWindowIcon(QtGui.QIcon('design/favicon.png'))
+        self.setWindowIcon(QtGui.QIcon('./data/img/favicon.png'))
         self.book_id = book_id
-        with open("books-list.json", "r", encoding="utf-8") as f:
+        with open("./data/books-list.json", "r", encoding="utf-8") as f:
             self.data = json.load(f)
         self.setupUi(self)
         self.initUI()
@@ -97,7 +97,7 @@ class Quote(QMainWindow, add_quote_interface.Ui_Form):
                             os.remove(book["cover"])
                         break
                 # перезаписываем json
-                with open("books-list.json", "w", encoding="utf-8") as write_file:
+                with open("./data/books-list.json", "w", encoding="utf-8") as write_file:
                     json.dump(self.data, write_file, ensure_ascii=False)
                 # выходим в main
                 self.made()
@@ -119,14 +119,14 @@ class Quote(QMainWindow, add_quote_interface.Ui_Form):
                     for quot in range(lw.count()):
                         book["quotes"].append(lw.item(quot).text())
         # перезаписываем json
-        with open("books-list.json", "w", encoding="utf-8") as write_file:
+        with open("./data/books-list.json", "w", encoding="utf-8") as write_file:
             json.dump(self.data, write_file, ensure_ascii=False)
         # чистим список цитат из виджета
         quotes_list.clear()
 
     def made(self):
         # выходим из окна и открываем main
-        from main import FirstForm
+        from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()
         self.ex.setStyleSheet(stylesheet)

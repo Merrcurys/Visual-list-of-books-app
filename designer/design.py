@@ -1,6 +1,6 @@
 stylesheet = """
     QMainWindow {
-         background-image: url("design/backgraund.jpg");
+         background-image: url("./data/img/backgraund.jpg");
     }
     
     QLabel {
