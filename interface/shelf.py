@@ -9,6 +9,7 @@ from designer.main_interface import Ui_Form
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QPushButton, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap
+from PyQt5.Qt import QGraphicsDropShadowEffect
 
 
 class FirstForm(QMainWindow, Ui_Form):
@@ -37,7 +38,7 @@ class FirstForm(QMainWindow, Ui_Form):
 
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            # создаем список с номерами книг на каждой странице
+            # создаем список с количеством книг на каждой странице
             self.pages = []
             first, last = 0, 8
             for _ in range(len(data['books']) // 8):
@@ -50,9 +51,17 @@ class FirstForm(QMainWindow, Ui_Form):
 
             self.page = 0  # номер страницы на главном экране
 
+        # отображение кнопок перелистывания
+        if len(self.pages) <= 1:
+            self.SwipeLeftButton.hide()
+            self.SwipeRightButton.hide()
+        else:
+            self.SwipeLeftButton.show()
+            self.SwipeRightButton.show()
+
         if self.pages:
             self.display_books(self.pages[self.page]
-                              [0], self.pages[self.page][1], "id")
+                               [0], self.pages[self.page][1], "id")
 
     def display_books(self, first, last, key):  # отображаем страницу с книгами
         self.book_list_id = []
@@ -77,6 +86,9 @@ class FirstForm(QMainWindow, Ui_Form):
                 self.cover_book_label.setGeometry(
                     QtCore.QRect(x_cover, y_cover, wh_cover, hh_cover))
                 self.book_list_id.append(self.cover_book_label)
+                shadow = QGraphicsDropShadowEffect(
+                    blurRadius=5, xOffset=4, yOffset=4)
+                self.cover_book_label.setGraphicsEffect(shadow)
                 # добавляем кнопку под обложкой
                 self.cover_book = QPushButton(self)
                 self.cover_book.clicked.connect(self.add_quote_form)
@@ -129,7 +141,7 @@ class FirstForm(QMainWindow, Ui_Form):
             for widget in self.book_list_id:
                 widget.show()
 
-    def connectButton(self, button, QuoteForm, book_id):  # передаем id в add_quote_form
+    def connectButton(self, button, QuoteForm, book_id):  # передаем ID в add_quote_form
         button.clicked.connect(lambda: QuoteForm(book_id))
 
     def add_book_form(self):  # открываем окно с добавлением книг
@@ -148,21 +160,21 @@ class FirstForm(QMainWindow, Ui_Form):
         if self.pages:
             self.close_books()
             self.display_books(self.pages[self.page][0],
-                              self.pages[self.page][1], "id")
+                               self.pages[self.page][1], "id")
             self.show_books()
 
     def sorted_name_book(self):  # сортировка по названию книги
         if self.pages:
             self.close_books()
             self.display_books(self.pages[self.page][0],
-                              self.pages[self.page][1], "name_book")
+                               self.pages[self.page][1], "name_book")
             self.show_books()
 
     def sorted_autor(self):  # сортировка по автору
         if self.pages:
             self.close_books()
             self.display_books(self.pages[self.page][0],
-                              self.pages[self.page][1], "name_autor")
+                               self.pages[self.page][1], "name_autor")
             self.show_books()
 
     def swipe_left(self):  # прошлая страница
@@ -174,7 +186,7 @@ class FirstForm(QMainWindow, Ui_Form):
             else:
                 self.page -= 1
             self.display_books(self.pages[self.page][0],
-                              self.pages[self.page][1], self.key)
+                               self.pages[self.page][1], self.key)
             self.show_books()
 
     def swipe_right(self):  # следующая страница
@@ -186,5 +198,5 @@ class FirstForm(QMainWindow, Ui_Form):
             else:
                 self.page += 1
             self.display_books(self.pages[self.page][0],
-                              self.pages[self.page][1], self.key)
+                               self.pages[self.page][1], self.key)
             self.show_books()

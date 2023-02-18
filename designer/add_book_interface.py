@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QLabel
 
 
 class Ui_Form(object):
@@ -18,8 +19,10 @@ class Ui_Form(object):
         self.AutorName.setGeometry(QtCore.QRect(300, 330, 141, 21))
         self.AutorName.setStyleSheet("font-size: 18px; ")
         self.AutorName.setObjectName("AutorName")
+        self.CoverBookLabel = QLabel(self)
+        self.CoverBookLabel.setGeometry(QtCore.QRect(83, 160, 180, 270))
         self.AddCoverButton = QtWidgets.QPushButton(Form)
-        self.AddCoverButton.setGeometry(QtCore.QRect(80, 180, 181, 251))
+        self.AddCoverButton.setGeometry(QtCore.QRect(83, 160, 180, 265))
         self.AddCoverButton.setStyleSheet("background: rgb(255, 255, 255);")
         self.AddCoverButton.setObjectName("AddCoverButton")
         self.BookNameEdit = QtWidgets.QLineEdit(Form)

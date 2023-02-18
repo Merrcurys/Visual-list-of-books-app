@@ -99,7 +99,7 @@ class Quote(QMainWindow, Ui_Form):
                 # перезаписываем json
                 with open("./data/books-list.json", "w", encoding="utf-8") as write_file:
                     json.dump(self.data, write_file, ensure_ascii=False)
-                # выходим в main
+                # выходим в shelf
                 self.made()
 
     def ready(self):
@@ -125,7 +125,7 @@ class Quote(QMainWindow, Ui_Form):
         quotes_list.clear()
 
     def made(self):
-        # выходим из окна и открываем main
+        # выходим из окна и открываем shelf
         from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()

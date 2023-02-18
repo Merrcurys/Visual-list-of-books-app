@@ -3,8 +3,10 @@ import json
 from designer.add_book_interface import Ui_Form
 from designer.design import stylesheet
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QPixmap
+from PyQt5.Qt import QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QLabel
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -30,7 +32,7 @@ class SecondForm(QMainWindow, Ui_Form):
             self.name_autor = self.AutorNameEdit.text()
             # добавляем к кол-ву книг +1
             self.data["count"] += 1
-            # проверяем была ли добавлена обложка пользователем
+            # проверяем была-ли добавлена обложка
             if self.cover_image == "":
                 # вызываем функцию создания обложки
                 self.create_cover()
@@ -64,12 +66,22 @@ class SecondForm(QMainWindow, Ui_Form):
             path = f'./data/covers/cover{self.data["count"] + 1}.jpg'
             img.save(path)
             self.cover_image = path
+            # показываем обложку
+            pixmap = QPixmap(path)
+            self.CoverBookLabel.setPixmap(pixmap)
+            self.CoverBookLabel.setScaledContents(True)
+            shadow = QGraphicsDropShadowEffect(
+                blurRadius=5, xOffset=4, yOffset=4)
+            self.CoverBookLabel.setGraphicsEffect(shadow)
+            # делаем кнопку прозрачной
+            self.AddCoverButton.setStyleSheet("border: none;")
+            self.AddCoverButton.setText("")
 
     def create_cover(self):
         # создаем обложку с текстом
         im = Image.new('RGB', (120, 180), color=("rgb(60, 60, 60)"))
         draw_text = ImageDraw.Draw(im)
-        # шрифт
+        # подключаем шрифт
         font = ImageFont.truetype('./data/font/Roboto-Black.ttf', size=14)
         # проверяем длину текста
         if len(self.name_book) > 12:
@@ -82,7 +94,7 @@ class SecondForm(QMainWindow, Ui_Form):
             name_book_img,
             font=font,
             fill='rgb(240, 240, 240)')
-        # шрифт
+        # подключаем шрифт
         font = ImageFont.truetype('./data/font/Roboto-Black.ttf', size=12)
         # проверяем длину текста
         if len(self.name_autor) > 14:
@@ -101,7 +113,7 @@ class SecondForm(QMainWindow, Ui_Form):
         self.cover_image = path
 
     def made(self):
-        # выходим из окна и открываем main
+        # выходим из окна и открываем shelf
         from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()
