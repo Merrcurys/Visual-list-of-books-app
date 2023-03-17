@@ -73,7 +73,7 @@ class Quote(QMainWindow, Ui_Form):
                                 if book["id"] == self.book_id:
                                     book["quotes"].remove(del_text)
                             # перезаписываем json
-                            with open("books-list.json", "w", encoding="utf-8") as write_file:
+                            with open("./data/books-list.json", "w", encoding="utf-8") as write_file:
                                 json.dump(self.data, write_file,
                                           ensure_ascii=False)
 
