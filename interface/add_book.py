@@ -33,9 +33,15 @@ class SecondForm(QMainWindow, Ui_Form):
             # добавляем к кол-ву книг +1
             self.data["count"] += 1
             # проверяем была-ли добавлена обложка
-            if self.cover_image == "":
+            if not self.cover_image:
                 # вызываем функцию создания обложки
                 self.create_cover()
+            else:
+                # сохраняем обложку пользователя
+                img = Image.open(self.filename)
+                path = f'./data/covers/cover{self.data["count"]}.jpg'
+                img.save(path)
+                self.cover_image = path
             # добавляем значения в JSON
             self.data["books"].append({
                 "name_book": self.name_book,
@@ -51,6 +57,12 @@ class SecondForm(QMainWindow, Ui_Form):
             self.BookNameEdit.setText("")
             self.AutorNameEdit.setText("")
             self.ErrorText.setText("")
+            # сбрасываем обложку
+            self.CoverBookLabel.hide()
+            self.AddCoverButton.setStyleSheet(
+                "background: rgb(255, 255, 255);")
+            self.AddCoverButton.setText(
+                QtCore.QCoreApplication.translate("Form", "Добавить обложку"))
         else:
             self.ErrorText.setText("Заполните все окна!")
 
@@ -60,14 +72,12 @@ class SecondForm(QMainWindow, Ui_Form):
                                                          ".",
                                                          "JPEG Files(*.jpeg, *.jpg);;\
                              PNG Files(*.png)")
-        # сохраняем обложку в папку с обложками
         if filename:
-            img = Image.open(filename)
-            path = f'./data/covers/cover{self.data["count"] + 1}.jpg'
-            img.save(path)
-            self.cover_image = path
+            self.filename = filename
+            self.cover_image = True
             # показываем обложку
-            pixmap = QPixmap(path)
+            pixmap = QPixmap(filename)
+            self.CoverBookLabel.show()
             self.CoverBookLabel.setPixmap(pixmap)
             self.CoverBookLabel.setScaledContents(True)
             shadow = QGraphicsDropShadowEffect(
