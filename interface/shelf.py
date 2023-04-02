@@ -61,14 +61,15 @@ class FirstForm(QMainWindow, Ui_Form):
 
         if self.pages:
             self.display_books(self.pages[self.page]
-                               [0], self.pages[self.page][1], "id")
+                               [0], self.pages[self.page][1], ["id", "id", False])
 
     def display_books(self, first, last, key):  # отображаем страницу с книгами
         self.book_list_id = []
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             self.key = key
-            data = sorted(data["books"], key=itemgetter(self.key))
+            print(self.key)
+            data = sorted(data["books"], key=itemgetter(self.key[0], self.key[1]), reverse=self.key[2])
             # координаты и размер обложки
             x_cover, y_cover, wh_cover, hh_cover = 75, 50, 120, 180
             # координаты название книги
@@ -159,22 +160,22 @@ class FirstForm(QMainWindow, Ui_Form):
     def sorted_ID(self):  # сортировка по ID
         if self.pages:
             self.close_books()
-            self.display_books(self.pages[self.page][0],
-                               self.pages[self.page][1], "id")
+            self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
+                               "id", "id", False])
             self.show_books()
 
     def sorted_name_book(self):  # сортировка по названию книги
         if self.pages:
             self.close_books()
-            self.display_books(self.pages[self.page][0],
-                               self.pages[self.page][1], "name_book")
+            self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
+                               "name_book", "name_autor", False])
             self.show_books()
 
     def sorted_autor(self):  # сортировка по автору
         if self.pages:
             self.close_books()
-            self.display_books(self.pages[self.page][0],
-                               self.pages[self.page][1], "name_autor")
+            self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
+                               "name_autor", "name_book", False])
             self.show_books()
 
     def swipe_left(self):  # прошлая страница
