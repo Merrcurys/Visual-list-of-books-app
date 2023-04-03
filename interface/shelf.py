@@ -35,6 +35,8 @@ class FirstForm(QMainWindow, Ui_Form):
             "Сортировка по названию книги.")
         self.SortedAutorButton.setToolTip(
             "Сортировка по автору.")
+        # значения для reverse
+        self.id_count, self.autor_name_count, self.book_name_count = 1, 0, 0
 
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -69,7 +71,8 @@ class FirstForm(QMainWindow, Ui_Form):
             data = json.load(f)
             self.key = key
             print(self.key)
-            data = sorted(data["books"], key=itemgetter(self.key[0], self.key[1]), reverse=self.key[2])
+            data = sorted(data["books"], key=itemgetter(
+                self.key[0], self.key[1]), reverse=self.key[2])
             # координаты и размер обложки
             x_cover, y_cover, wh_cover, hh_cover = 75, 50, 120, 180
             # координаты название книги
@@ -159,24 +162,51 @@ class FirstForm(QMainWindow, Ui_Form):
 
     def sorted_ID(self):  # сортировка по ID
         if self.pages:
+            self.autor_name_count, self.book_name_count = 0, 0
+            if self.id_count == 1:
+                key = True
+            else:
+                key = False
             self.close_books()
             self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
-                               "id", "id", False])
+                               "id", "id", key])
             self.show_books()
+            if self.id_count == 1:
+                self.id_count = 0
+            else:
+                self.id_count = 1
 
     def sorted_name_book(self):  # сортировка по названию книги
         if self.pages:
+            self.autor_name_count, self.id_count = 0, 0
+            if self.book_name_count == 1:
+                key = True
+            else:
+                key = False
             self.close_books()
             self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
-                               "name_book", "name_autor", False])
+                               "name_book", "name_autor", key])
             self.show_books()
+            if self.book_name_count == 1:
+                self.book_name_count = 0
+            else:
+                self.book_name_count = 1
 
     def sorted_autor(self):  # сортировка по автору
         if self.pages:
+            self.book_name_count, self.id_count = 0, 0
+            if self.autor_name_count == 1:
+                key = True
+            else:
+                key = False
             self.close_books()
             self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
-                               "name_autor", "name_book", False])
+                               "name_autor", "name_book", key])
             self.show_books()
+            if self.autor_name_count == 1:
+                self.autor_name_count = 0
+            else:
+                self.autor_name_count = 1
 
     def swipe_left(self):  # прошлая страница
         if self.pages:
