@@ -1,12 +1,12 @@
 import json
 
-from designer.add_book_interface import Ui_Form
-from designer.design import stylesheet
+from template.add_book_interface import Ui_Form
+from template.design import stylesheet
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QPixmap
 from PyQt5.Qt import QGraphicsDropShadowEffect
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QLabel
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from PIL import Image, ImageDraw, ImageFont
 
 

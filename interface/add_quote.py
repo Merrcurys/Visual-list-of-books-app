@@ -1,8 +1,8 @@
 import json
 import os
 
-from designer.add_quote_interface import Ui_Form
-from designer.design import stylesheet
+from template.add_quote_interface import Ui_Form
+from template.design import stylesheet
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QInputDialog

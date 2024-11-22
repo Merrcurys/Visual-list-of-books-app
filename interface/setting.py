@@ -3,14 +3,11 @@ import os
 import zipfile
 from pathlib import Path
 
-from designer.settings_interface import Ui_Form
-from designer.design import stylesheet
+from template.settings_interface import Ui_Form
+from template.design import stylesheet
 
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QPixmap
-from PyQt5.Qt import QGraphicsDropShadowEffect
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QLabel, QMessageBox
-from PIL import Image, ImageDraw, ImageFont
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 
 
 class SettingsForm(QMainWindow, Ui_Form):

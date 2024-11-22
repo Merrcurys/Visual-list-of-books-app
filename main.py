@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QApplication
-import sys
 from interface.shelf import FirstForm
-from designer.design import stylesheet
+from template.design import stylesheet
+import sys
 
 
 def main():
