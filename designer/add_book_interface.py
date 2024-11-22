@@ -9,7 +9,8 @@ class Ui_Form(object):
         Form.setStyleSheet("")
         self.ReadyButtonAddBook = QtWidgets.QPushButton(Form)
         self.ReadyButtonAddBook.setGeometry(QtCore.QRect(530, 410, 111, 21))
-        self.ReadyButtonAddBook.setStyleSheet("font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
+        self.ReadyButtonAddBook.setStyleSheet(
+            "font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
         self.ReadyButtonAddBook.setObjectName("ReadyButtonAddBook")
         self.BookName = QtWidgets.QLabel(Form)
         self.BookName.setGeometry(QtCore.QRect(300, 280, 141, 21))
@@ -44,7 +45,8 @@ class Ui_Form(object):
         self.label.setObjectName("label")
         self.BackToMainButton = QtWidgets.QPushButton(Form)
         self.BackToMainButton.setGeometry(QtCore.QRect(10, 581, 71, 20))
-        self.BackToMainButton.setStyleSheet("font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
+        self.BackToMainButton.setStyleSheet(
+            "font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
         self.BackToMainButton.setObjectName("BackToMainButton")
 
         self.retranslateUi(Form)

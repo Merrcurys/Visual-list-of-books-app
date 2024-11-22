@@ -1,8 +1,10 @@
 import json
+import os
 from operator import itemgetter
 
 from interface.add_book import SecondForm
 from interface.add_quote import Quote
+from interface.setting import SettingsForm
 from designer.design import stylesheet
 from designer.main_interface import Ui_Form
 
@@ -10,6 +12,8 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QPushButton, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.Qt import QGraphicsDropShadowEffect
+
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Для 2-3к мониторов
 
 
 class FirstForm(QMainWindow, Ui_Form):
@@ -21,6 +25,7 @@ class FirstForm(QMainWindow, Ui_Form):
 
     def initUI(self):
         self.AddBookButton.clicked.connect(self.add_book_form)
+        self.Settings.clicked.connect(self.open_setting_form)
         # кнопки для переключение страниц
         self.SwipeLeftButton.clicked.connect(self.swipe_left)
         self.SwipeRightButton.clicked.connect(self.swipe_right)
@@ -158,6 +163,12 @@ class FirstForm(QMainWindow, Ui_Form):
         self.quote_form = Quote(book_id)
         self.quote_form.setStyleSheet(stylesheet)
         self.quote_form.show()
+        self.close()
+
+    def open_setting_form(self):  # открываем окно с настройками
+        self.settings_form = SettingsForm()
+        self.settings_form.setStyleSheet(stylesheet)
+        self.settings_form.show()
         self.close()
 
     def sorted_ID(self):  # сортировка по ID
