@@ -1,5 +1,8 @@
 {
-    "sort_value": ["id", "id", 0],
+    "sort": {
+        "text": ["id", "id", 0],
+        "digit": [1, 1, 0]
+    },
     "count": 0,
     "books": []
 }

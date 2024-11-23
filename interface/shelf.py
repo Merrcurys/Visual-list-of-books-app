@@ -39,11 +39,11 @@ class FirstForm(QMainWindow, Ui_Form):
         self.SortedAutorButton.clicked.connect(
             lambda: self.sorted_by("name_autor", "name_book"))
 
-        # значения для reverse
-        self.id_count, self.autor_name_count, self.book_name_count = 1, 0, 0
-
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
+            # значения для reverse
+            self.id_count, self.autor_name_count, self.book_name_count = data["sort"]["digit"]
+
             # создаем список с количеством книг на каждой странице
             num_books = len(data['books'])
             self.pages = [[i * 8, min((i + 1) * 8, num_books)]
@@ -61,15 +61,14 @@ class FirstForm(QMainWindow, Ui_Form):
 
         if self.pages:
             pages = self.pages[self.page]
-            self.display_books(pages[0], pages[1], ["id", "id", 0])
+            self.display_books(pages[0], pages[1])
 
-    def display_books(self, first, last, key):
+    def display_books(self, first, last):
         """Отображаем книги на странице."""
         self.book_list_id = []
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            self.key = key
-            print(self.key)
+            self.key = data["sort"]["text"]
             data = sorted(data["books"], key=itemgetter(
                 self.key[0], self.key[1]), reverse=self.key[2])
 
@@ -188,8 +187,17 @@ class FirstForm(QMainWindow, Ui_Form):
         if self.pages:
             self.close_books()
             order = self._toggle_sort(key)
-            self.display_books(self.pages[self.page][0], self.pages[self.page][1], [
-                key, secondary_key, order])
+
+            # перезаписываем значения сортировки
+            with open("./data/books-list.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                data["sort"]["text"] = [key, secondary_key, order]
+
+            
+            with open("./data/books-list.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+
+            self.display_books(self.pages[self.page][0], self.pages[self.page][1])
             self.show_books()
 
     def _toggle_sort(self, key):
@@ -199,6 +207,16 @@ class FirstForm(QMainWindow, Ui_Form):
             self.book_name_count = 1 - self.book_name_count
         elif key == "name_autor":
             self.autor_name_count = 1 - self.autor_name_count
+
+        # перезаписываем значения для reverse
+        with open("./data/books-list.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            data["sort"]["digit"] = [self.id_count, self.autor_name_count, self.book_name_count]
+
+        with open("./data/books-list.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False)
+
+
         return self.id_count if key == "id" else self.book_name_count if key == "name_book" else self.autor_name_count
 
     def swipe_left(self):
@@ -208,7 +226,7 @@ class FirstForm(QMainWindow, Ui_Form):
             # циклический перенос
             self.page = (self.page - 1) % len(self.pages)
             self.display_books(self.pages[self.page]
-                               [0], self.pages[self.page][1], self.key)
+                               [0], self.pages[self.page][1])
             self.show_books()
 
     def swipe_right(self):
@@ -218,5 +236,5 @@ class FirstForm(QMainWindow, Ui_Form):
             # циклический перенос
             self.page = (self.page - 1) % len(self.pages)
             self.display_books(self.pages[self.page]
-                               [0], self.pages[self.page][1], self.key)
+                               [0], self.pages[self.page][1])
             self.show_books()
