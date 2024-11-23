@@ -26,6 +26,7 @@ class SettingsForm(QMainWindow, Ui_Form):
         self.BackToMainButton.clicked.connect(self.made)
 
     def export_books(self):
+        """"Экспорт книг в zip."""
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getSaveFileName(self, "Export Data", os.getcwd(
@@ -67,6 +68,7 @@ class SettingsForm(QMainWindow, Ui_Form):
                     self, "Ошибка", f"Произошла неизвестная ошибка: {e}")
 
     def import_books(self):
+        """"Импорт книг в zip."""
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Import Data", os.getcwd(
@@ -91,6 +93,7 @@ class SettingsForm(QMainWindow, Ui_Form):
                     self, "Ошибка", f"Во время импорта произошла непредвиденная ошибка: {e}")
 
     def made(self):
+        """Возвращение на домашнее окно."""
         from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()

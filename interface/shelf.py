@@ -14,9 +14,6 @@ from PyQt5.QtWidgets import QPushButton, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.Qt import QGraphicsDropShadowEffect
 
-# отвечает за адаптивное расширение на 2-4к мониторах
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-
 
 class FirstForm(QMainWindow, Ui_Form):
     def __init__(self):
@@ -30,11 +27,11 @@ class FirstForm(QMainWindow, Ui_Form):
         self.AddBookButton.clicked.connect(self.add_book_form)
         self.Settings.clicked.connect(self.open_setting_form)
 
-        # кнопки для переключение страниц
+        # подключение кнопок для переключение страниц
         self.SwipeLeftButton.clicked.connect(self.swipe_left)
         self.SwipeRightButton.clicked.connect(self.swipe_right)
 
-        # кнопки для сортировки
+        # подключение кнопок кнопок для сортировки
         self.SortedIDButton.clicked.connect(
             lambda: self.sorted_by("id", "id"))
         self.SortedNameBookButton.clicked.connect(
