@@ -27,10 +27,13 @@ class SettingsForm(QMainWindow, Ui_Form):
 
     def export_books(self):
         """"Экспорт книг в zip."""
+        default_filename = os.path.join(
+            os.getcwd(), "export_tracker_book.zip")  # Create the full path
+
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Export Data", os.getcwd(
-        ), "Zip Files (*.zip);;All Files (*)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, "Export Data", default_filename,  # Use default_filename here
+                                                  "Zip Files (*.zip);;All Files (*)", options=options)
 
         if fileName:
             if not fileName.lower().endswith(".zip"):
@@ -77,6 +80,12 @@ class SettingsForm(QMainWindow, Ui_Form):
         if fileName:
             try:
                 with zipfile.ZipFile(fileName, 'r') as zipf:
+                    namelist = zipf.namelist()
+                    # Проверка, что есть books-list.json и папка с обложками.
+                    if 'books-list.json' not in namelist or not any(name.startswith('covers/') for name in namelist):
+                        raise ValueError(
+                            "Zip архив не содержит нужные для импорта файлы: 'books-list.json' и папку 'covers'.")
+
                     self.data_dir.mkdir(parents=True, exist_ok=True)
                     zipf.extractall(str(self.data_dir))
 
