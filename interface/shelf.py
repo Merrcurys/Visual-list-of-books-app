@@ -13,6 +13,7 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QPushButton, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.Qt import QGraphicsDropShadowEffect
+from PyQt5.QtCore import Qt
 
 
 class FirstForm(QMainWindow, Ui_Form):
@@ -114,12 +115,27 @@ class FirstForm(QMainWindow, Ui_Form):
         self.cover_book_label.setGraphicsEffect(shadow)
 
         self.cover_book = QPushButton(self)
-        self.cover_book.setStyleSheet("border: none;")
+        # установка курсора для hover
+        self.cover_book.setCursor(Qt.PointingHandCursor)
         self.cover_book.setGeometry(QtCore.QRect(
             cover_coords["x"], cover_coords["y"],
             cover_coords["w"], cover_coords["h"]))
         self.cover_book.clicked.connect(
             lambda: self.add_quote_form(book["id"]))
+
+        # установка hover эффекта
+        self.cover_book.setStyleSheet(
+            """
+            QPushButton {
+                border: none;
+                background-color: transparent;
+            }
+            QPushButton:hover {
+                background-color: rgba(0, 0, 0, 50);
+                border: 1px solid #000;
+            }
+            """
+        )
 
         self.book_list_id.append(self.cover_book_label)
         self.book_list_id.append(self.cover_book)
@@ -193,11 +209,11 @@ class FirstForm(QMainWindow, Ui_Form):
                 data = json.load(f)
                 data["sort"]["text"] = [key, secondary_key, order]
 
-            
             with open("./data/books-list.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)
 
-            self.display_books(self.pages[self.page][0], self.pages[self.page][1])
+            self.display_books(
+                self.pages[self.page][0], self.pages[self.page][1])
             self.show_books()
 
     def _toggle_sort(self, key):
@@ -211,11 +227,11 @@ class FirstForm(QMainWindow, Ui_Form):
         # перезаписываем значения для reverse
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            data["sort"]["digit"] = [self.id_count, self.autor_name_count, self.book_name_count]
+            data["sort"]["digit"] = [self.id_count,
+                                     self.autor_name_count, self.book_name_count]
 
         with open("./data/books-list.json", "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False)
-
 
         return self.id_count if key == "id" else self.book_name_count if key == "name_book" else self.autor_name_count
 
