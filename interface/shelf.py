@@ -256,7 +256,7 @@ class FirstForm(QMainWindow, Ui_Form):
         if self.pages:
             self.close_books()
             # циклический перенос
-            self.page = (self.page - 1) % len(self.pages)
+            self.page = (self.page + 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
             self.display_pagenumber()
