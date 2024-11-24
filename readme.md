@@ -55,8 +55,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Команды для работы
+## Прочее
 ```bash
 # Конвертипрует файл ui интерфейса в файл python
 pyuic5 -x name_ui.ui -o name_file.py  
+```
+
+```bash
+# Команды для создания exe
+pip install auto-py-to-exe
+
+# Далее откроется удобный интерфейс для создания exe
+auto-py-to-exe
 ```
