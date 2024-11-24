@@ -40,6 +40,14 @@ class FirstForm(QMainWindow, Ui_Form):
         self.SortedAutorButton.clicked.connect(
             lambda: self.sorted_by("name_autor", "name_book"))
 
+        # подсказки
+        self.SortedIDButton.setToolTip(
+            "Сортировка по времени добавления.")
+        self.SortedNameBookButton.setToolTip(
+            "Сортировка по названию книги.")
+        self.SortedAutorButton.setToolTip(
+            "Сортировка по автору.")
+
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             # значения для reverse
@@ -63,6 +71,8 @@ class FirstForm(QMainWindow, Ui_Form):
 
         if self.pages:
             pages = self.pages[self.page]
+            print(pages)
+            print("init")
             self.display_books(pages[0], pages[1])
 
     def display_pagenumber(self):
@@ -259,5 +269,7 @@ class FirstForm(QMainWindow, Ui_Form):
             self.page = (self.page + 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
+            print(self.pages[self.page])
+            print("right")
             self.display_pagenumber()
             self.show_books()
