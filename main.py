@@ -7,6 +7,7 @@ import os
 # отвечает за адаптивное расширение на 2-4к мониторах
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
+
 def main():
     app = QApplication(sys.argv)
     ex = FirstForm()

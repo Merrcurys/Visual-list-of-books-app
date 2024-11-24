@@ -51,6 +51,7 @@ class FirstForm(QMainWindow, Ui_Form):
                           for i in range(math.ceil(num_books / 8))]
 
             self.page = 0  # номер страницы на главном экране
+            self.display_pagenumber()
 
         # отображение кнопок перелистывания
         if len(self.pages) <= 1:
@@ -63,6 +64,10 @@ class FirstForm(QMainWindow, Ui_Form):
         if self.pages:
             pages = self.pages[self.page]
             self.display_books(pages[0], pages[1])
+
+    def display_pagenumber(self):
+        count_pages = 1 if len(self.pages) == 0 else len(self.pages)
+        self.PageNumber.setText(f"{self.page + 1}/{count_pages}")
 
     def display_books(self, first, last):
         """Отображаем книги на странице."""
@@ -243,6 +248,7 @@ class FirstForm(QMainWindow, Ui_Form):
             self.page = (self.page - 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
+            self.display_pagenumber()
             self.show_books()
 
     def swipe_right(self):
@@ -253,4 +259,5 @@ class FirstForm(QMainWindow, Ui_Form):
             self.page = (self.page - 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
+            self.display_pagenumber()
             self.show_books()

@@ -54,3 +54,9 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+
+## Команды для работы
+```bash
+# Конвертипрует файл ui интерфейса в файл python
+pyuic5 -x name_ui.ui -o name_file.py  
+```
