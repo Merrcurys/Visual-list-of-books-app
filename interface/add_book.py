@@ -1,12 +1,12 @@
 import json
 
-from designer.add_book_interface import Ui_Form
-from designer.design import stylesheet
+from template.add_book_interface import Ui_Form
+from template.design import stylesheet
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QPixmap
 from PyQt5.Qt import QGraphicsDropShadowEffect
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QLabel
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -26,6 +26,7 @@ class SecondForm(QMainWindow, Ui_Form):
         self.BackToMainButton.clicked.connect(self.made)
 
     def ready_add_book(self):
+        """Кнопка добавления книги."""
         if self.BookNameEdit.text() != "" and self.AutorNameEdit.text() != "":
             # передаем значения автора и названия книги
             self.name_book = self.BookNameEdit.text()
@@ -35,7 +36,7 @@ class SecondForm(QMainWindow, Ui_Form):
             # проверяем была-ли добавлена обложка
             if not self.cover_image:
                 # вызываем функцию создания обложки
-                self.create_cover()
+                self._create_cover()
             else:
                 # сохраняем обложку пользователя
                 img = Image.open(self.filename)
@@ -67,6 +68,7 @@ class SecondForm(QMainWindow, Ui_Form):
             self.ErrorText.setText("Заполните все окна!")
 
     def get_cover(self):
+        """Кнопка добавления обложки."""
         filename, filetype = QFileDialog.getOpenFileName(self,
                                                          "Выбрать обложку",
                                                          ".",
@@ -87,7 +89,8 @@ class SecondForm(QMainWindow, Ui_Form):
             self.AddCoverButton.setStyleSheet("border: none;")
             self.AddCoverButton.setText("")
 
-    def create_cover(self):
+    def _create_cover(self):
+        """Создание обложки."""
         # создаем обложку с текстом
         im = Image.new('RGB', (120, 180), color=("rgb(60, 60, 60)"))
         draw_text = ImageDraw.Draw(im)
@@ -123,7 +126,7 @@ class SecondForm(QMainWindow, Ui_Form):
         self.cover_image = path
 
     def made(self):
-        # выходим из окна и открываем shelf
+        """Возвращение на домашнее окно."""
         from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()

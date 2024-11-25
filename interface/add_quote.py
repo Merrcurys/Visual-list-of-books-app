@@ -1,8 +1,8 @@
 import json
 import os
 
-from designer.add_quote_interface import Ui_Form
-from designer.design import stylesheet
+from template.add_quote_interface import Ui_Form
+from template.design import stylesheet
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QInputDialog
@@ -34,7 +34,8 @@ class Quote(QMainWindow, Ui_Form):
                     self.ListWidget.addItem(quot)
                 break
 
-    def dialog_add(self):  # диалоговое окно с добавлением цитаты
+    def dialog_add(self):
+        """Диалоговое окно с добавлением цитаты."""
         dlg = QInputDialog(self)
         dlg.setInputMode(QInputDialog.TextInput)
         dlg.setLabelText("Введите цитату:")
@@ -46,7 +47,8 @@ class Quote(QMainWindow, Ui_Form):
             self.ListWidget.addItem(name)
             self.ready()
 
-    def dialog_del(self):  # диалоговое окно с удалением цитаты
+    def dialog_del(self):
+        """Диалоговое окно с удалением цитаты."""
         if self.ListWidget.currentItem() is not None:
             dlg = QInputDialog(self)
             dlg.setInputMode(QInputDialog.TextInput)
@@ -78,6 +80,7 @@ class Quote(QMainWindow, Ui_Form):
                                           ensure_ascii=False)
 
     def book_del(self):
+        """Диалоговое окно с удалением книги."""
         dlg = QInputDialog(self)
         dlg.setInputMode(QInputDialog.TextInput)
         dlg.setLabelText('Введите "удалить", чтобы удалить книгу:')
@@ -103,6 +106,7 @@ class Quote(QMainWindow, Ui_Form):
                 self.made()
 
     def ready(self):
+        """Кнопка для добавления цитаты."""
         # добавляем в список цитаты из виджета
         quotes_list = []
         lw = self.ListWidget
@@ -125,7 +129,7 @@ class Quote(QMainWindow, Ui_Form):
         quotes_list.clear()
 
     def made(self):
-        # выходим из окна и открываем shelf
+        """Возвращение на домашнее окно."""
         from interface.shelf import FirstForm
         self.close()
         self.ex = FirstForm()
