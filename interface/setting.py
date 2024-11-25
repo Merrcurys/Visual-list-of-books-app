@@ -28,11 +28,11 @@ class SettingsForm(QMainWindow, Ui_Form):
     def export_books(self):
         """"Экспорт книг в zip."""
         default_filename = os.path.join(
-            os.getcwd(), "export_tracker_book.zip")  # Create the full path
+            os.getcwd(), "export_tracker_book.zip")
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Export Data", default_filename,  # Use default_filename here
+        fileName, _ = QFileDialog.getSaveFileName(self, "Export Data", default_filename,
                                                   "Zip Files (*.zip);;All Files (*)", options=options)
 
         if fileName:
