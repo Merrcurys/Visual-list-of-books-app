@@ -1,5 +1,5 @@
 <p align="center">
-      <img src="https://i.ibb.co/VSbSFXk/Tracker-Book.jpg" alt="Project Logo" width="726">
+      <img src="https://github.com/user-attachments/assets/49672b40-6a0e-4cb6-9b2d-9b3c8b56e057" alt="Project Logo" width="726">
 </p>
 
 ## О приложении
