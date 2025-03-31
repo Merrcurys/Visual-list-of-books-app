@@ -1,5 +1,4 @@
 import json
-import os
 import math
 from operator import itemgetter
 
@@ -24,15 +23,15 @@ class FirstForm(QMainWindow, Ui_Form):
         self.initUI()
 
     def initUI(self):
-        # подключение кнопок
+        # Подключение кнопок
         self.AddBookButton.clicked.connect(self.add_book_form)
         self.Settings.clicked.connect(self.open_setting_form)
 
-        # подключение кнопок для переключение страниц
+        # Подключение кнопок для переключение страниц
         self.SwipeLeftButton.clicked.connect(self.swipe_left)
         self.SwipeRightButton.clicked.connect(self.swipe_right)
 
-        # подключение кнопок кнопок для сортировки
+        # Подключение кнопок кнопок для сортировки
         self.SortedIDButton.clicked.connect(
             lambda: self.sorted_by("id", "id"))
         self.SortedNameBookButton.clicked.connect(
@@ -40,7 +39,7 @@ class FirstForm(QMainWindow, Ui_Form):
         self.SortedAutorButton.clicked.connect(
             lambda: self.sorted_by("name_autor", "name_book"))
 
-        # подсказки
+        # Подсказки
         self.SortedIDButton.setToolTip(
             "Сортировка по времени добавления.")
         self.SortedNameBookButton.setToolTip(
@@ -50,18 +49,18 @@ class FirstForm(QMainWindow, Ui_Form):
 
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            # значения для reverse
+            # Значения для reverse
             self.id_count, self.autor_name_count, self.book_name_count = data["sort"]["digit"]
 
-            # создаем список с количеством книг на каждой странице
+            # Создаем список с количеством книг на каждой странице
             num_books = len(data['books'])
             self.pages = [[i * 8, min((i + 1) * 8, num_books)]
                           for i in range(math.ceil(num_books / 8))]
 
-            self.page = 0  # номер страницы на главном экране
+            self.page = 0  # Номер страницы на главном экране
             self.display_pagenumber()
 
-        # отображение кнопок перелистывания
+        # Отображение кнопок перелистывания
         if len(self.pages) <= 1:
             self.SwipeLeftButton.hide()
             self.SwipeRightButton.hide()
@@ -71,8 +70,6 @@ class FirstForm(QMainWindow, Ui_Form):
 
         if self.pages:
             pages = self.pages[self.page]
-            print(pages)
-            print("init")
             self.display_books(pages[0], pages[1])
 
     def display_pagenumber(self):
@@ -88,24 +85,24 @@ class FirstForm(QMainWindow, Ui_Form):
             data = sorted(data["books"], key=itemgetter(
                 self.key[0], self.key[1]), reverse=self.key[2])
 
-            # координаты и размер обложки
+            # Координаты и размер обложки
             cover_coords = {"x": 75, "y": 50, "w": 120, "h": 180}
-            # координаты название автора
+            # Координаты название автора
             autor_coords = {"x": 75, "y": 260, "w": 120, "h": 20}
-            # координаты название книги
+            # Координаты название книги
             bookname_coords = {"x": 75, "y": 240, "w": 120, "h": 20}
 
             for num in range(first, last):
                 book = data[num]
 
-                # создаем обложку книги
+                # Создаем обложку книги
                 self._create_cover_book(book, cover_coords)
-                # создаем текст с названием книги
+                # Создаем текст с названием книги
                 self._create_bookname_text(book, bookname_coords)
-                # создаем текст с фио автора
+                # Создаем текст с фио автора
                 self._create_author_text(book, autor_coords)
 
-                # меняем координаты для слудующей книги
+                # Меняем координаты для слудующей книги
                 if (num + 1) % 4 == 0:
                     cover_coords["x"], autor_coords["x"], bookname_coords["x"] = 75, 75, 75
                     cover_coords["y"] += 250
@@ -130,7 +127,7 @@ class FirstForm(QMainWindow, Ui_Form):
         self.cover_book_label.setGraphicsEffect(shadow)
 
         self.cover_book = QPushButton(self)
-        # установка курсора для hover
+        # Установка курсора для hover
         self.cover_book.setCursor(Qt.PointingHandCursor)
         self.cover_book.setGeometry(QtCore.QRect(
             cover_coords["x"], cover_coords["y"],
@@ -138,7 +135,7 @@ class FirstForm(QMainWindow, Ui_Form):
         self.cover_book.clicked.connect(
             lambda: self.add_quote_form(book["id"]))
 
-        # установка hover эффекта
+        # Установка hover эффекта
         self.cover_book.setStyleSheet(
             """
             QPushButton {
@@ -157,7 +154,7 @@ class FirstForm(QMainWindow, Ui_Form):
 
     def _create_bookname_text(self, book, bookname_coords):
         self.book_name = QLabel(self)
-        # если название большое - сокращаем
+        # Если название большое - сокращаем
         book_name = book["name_book"][:18] + \
             ".." if len(book["name_book"]) > 19 else book["name_book"]
         self.book_name.setText(book_name)
@@ -169,7 +166,7 @@ class FirstForm(QMainWindow, Ui_Form):
 
     def _create_author_text(self, book, autor_coords):
         self.autor_name = QLabel(self)
-        # если фио автора большое - сокращаем
+        # Если фио автора большое - сокращаем
         autor_name = book["name_autor"][:18] + \
             ".." if len(book["name_autor"]
                         ) > 19 else book["name_autor"]
@@ -219,7 +216,7 @@ class FirstForm(QMainWindow, Ui_Form):
             self.close_books()
             order = self._toggle_sort(key)
 
-            # перезаписываем значения сортировки
+            # Перезаписываем значения сортировки
             with open("./data/books-list.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
                 data["sort"]["text"] = [key, secondary_key, order]
@@ -239,7 +236,7 @@ class FirstForm(QMainWindow, Ui_Form):
         elif key == "name_autor":
             self.autor_name_count = 1 - self.autor_name_count
 
-        # перезаписываем значения для reverse
+        # Перезаписываем значения для reverse
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             data["sort"]["digit"] = [self.id_count,
@@ -254,7 +251,7 @@ class FirstForm(QMainWindow, Ui_Form):
         """Переключение на предыдущую страницу."""
         if self.pages:
             self.close_books()
-            # циклический перенос
+            # Циклический перенос
             self.page = (self.page - 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
@@ -265,11 +262,9 @@ class FirstForm(QMainWindow, Ui_Form):
         """Переключение на следующую страницу."""
         if self.pages:
             self.close_books()
-            # циклический перенос
+            # Циклический перенос
             self.page = (self.page + 1) % len(self.pages)
             self.display_books(self.pages[self.page]
                                [0], self.pages[self.page][1])
-            print(self.pages[self.page])
-            print("right")
             self.display_pagenumber()
             self.show_books()

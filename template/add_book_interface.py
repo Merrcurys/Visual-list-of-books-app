@@ -9,7 +9,7 @@ class Ui_Form(object):
         Form.setStyleSheet("")
 
         self.ReadyButtonAddBook = QtWidgets.QPushButton(Form)
-        self.ReadyButtonAddBook.setGeometry(QtCore.QRect(530, 410, 111, 21))
+        self.ReadyButtonAddBook.setGeometry(QtCore.QRect(490, 410, 151, 21))
         self.ReadyButtonAddBook.setStyleSheet(
             "font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
         self.ReadyButtonAddBook.setObjectName("ReadyButtonAddBook")

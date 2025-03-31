@@ -1,4 +1,5 @@
 import json
+import os
 
 from template.add_book_interface import Ui_Form
 from template.design import stylesheet
@@ -11,59 +12,75 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 class SecondForm(QMainWindow, Ui_Form):
-    def __init__(self):
+    def __init__(self, book_id=None):
         super().__init__()
         self.setWindowIcon(QtGui.QIcon('./data/img/favicon.png'))
         self.setupUi(self)
-        self.initUI()
+        self.book_id = book_id
         with open("./data/books-list.json", "r", encoding="utf-8") as f:
             self.data = json.load(f)
+        self.initUI()
 
     def initUI(self):
         self.cover_image = ""
         self.ReadyButtonAddBook.clicked.connect(self.ready_add_book)
         self.AddCoverButton.clicked.connect(self.get_cover)
         self.BackToMainButton.clicked.connect(self.made)
+        if self.book_id is not None:
+            self.ReadyButtonAddBook.setText("Сохранить изменения")
+            self.setWindowTitle("Редактирование книги")
 
     def ready_add_book(self):
-        """Кнопка добавления книги."""
+        """Кнопка добавления/редактирования книги."""
         if self.BookNameEdit.text() != "" and self.AutorNameEdit.text() != "":
-            # передаем значения автора и названия книги
+            # Передаем значения автора и названия книги
             self.name_book = self.BookNameEdit.text()
             self.name_autor = self.AutorNameEdit.text()
-            # добавляем к кол-ву книг +1
-            self.data["count"] += 1
-            # проверяем была-ли добавлена обложка
-            if not self.cover_image:
-                # вызываем функцию создания обложки
-                self._create_cover()
+
+            if self.book_id is not None:
+                # Редактирование существующей книги
+                for book in self.data["books"]:
+                    if book["id"] == self.book_id:
+                        book["name_book"] = self.name_book
+                        book["name_autor"] = self.name_autor
+                        if not self.cover_image:
+                            self._create_cover()
+                            if os.path.isfile(book["cover"]):
+                                os.remove(book["cover"])
+                            book["cover"] = self.cover_image
+                        elif self.cover_image != book["cover"]:
+                            if os.path.isfile(book["cover"]):
+                                os.remove(book["cover"])
+                            # Сохраняем новую обложку
+                            img = Image.open(self.cover_image)
+                            path = f'./data/covers/cover{self.book_id}.jpg'
+                            img.save(path)
+                            book["cover"] = path
+                        break
             else:
-                # сохраняем обложку пользователя
-                img = Image.open(self.filename)
-                path = f'./data/covers/cover{self.data["count"]}.jpg'
-                img.save(path)
-                self.cover_image = path
-            # добавляем значения в JSON
-            self.data["books"].append({
-                "name_book": self.name_book,
-                "name_autor": self.name_autor,
-                "cover": self.cover_image,
-                "id": self.data["count"],
-                "quotes": []})
+                # Добавление новой книги
+                self.data["count"] += 1
+                if not self.cover_image:
+                    self._create_cover()
+                else:
+                    # Сохраняем новую обложку
+                    img = Image.open(self.cover_image)
+                    path = f'./data/covers/cover{self.data["count"]}.jpg'
+                    img.save(path)
+                    self.cover_image = path
+
+                self.data["books"].append({
+                    "name_book": self.name_book,
+                    "name_autor": self.name_autor,
+                    "cover": self.cover_image,
+                    "id": self.data["count"],
+                    "quotes": []})
 
             with open("./data/books-list.json", "w", encoding="utf-8") as write_file:
                 json.dump(self.data, write_file, ensure_ascii=False)
-            # сбрасываем значения
-            self.cover_image = ""
-            self.BookNameEdit.setText("")
-            self.AutorNameEdit.setText("")
-            self.ErrorText.setText("")
-            # сбрасываем обложку
-            self.CoverBookLabel.hide()
-            self.AddCoverButton.setStyleSheet(
-                "background: rgb(255, 255, 255);")
-            self.AddCoverButton.setText(
-                QtCore.QCoreApplication.translate("Form", "Добавить обложку"))
+
+            # Возвращаемся на главную
+            self.made()
         else:
             self.ErrorText.setText("Заполните все окна!")
 
@@ -76,8 +93,7 @@ class SecondForm(QMainWindow, Ui_Form):
                              PNG Files(*.png)")
         if filename:
             self.filename = filename
-            self.cover_image = True
-            # показываем обложку
+            # Показываем обложку
             pixmap = QPixmap(filename)
             self.CoverBookLabel.show()
             self.CoverBookLabel.setPixmap(pixmap)
@@ -85,42 +101,44 @@ class SecondForm(QMainWindow, Ui_Form):
             shadow = QGraphicsDropShadowEffect(
                 blurRadius=5, xOffset=4, yOffset=4)
             self.CoverBookLabel.setGraphicsEffect(shadow)
-            # делаем кнопку прозрачной
+            # Делаем кнопку прозрачной
             self.AddCoverButton.setStyleSheet("border: none;")
             self.AddCoverButton.setText("")
+            # Сохраняем путь к выбранному файлу
+            self.cover_image = filename
 
     def _create_cover(self):
         """Создание обложки."""
-        # создаем обложку с текстом
+        # Создаем обложку с текстом
         im = Image.new('RGB', (120, 180), color=("rgb(60, 60, 60)"))
         draw_text = ImageDraw.Draw(im)
-        # подключаем шрифт
+        # Подключаем шрифт
         font = ImageFont.truetype('./data/font/Roboto-Black.ttf', size=14)
-        # проверяем длину текста
+        # Проверяем длину текста
         if len(self.name_book) > 12:
             name_book_img = f"{self.name_book[:12]}.."
         else:
             name_book_img = self.name_book
-        # добавляем название книги на обложку
+        # Добавляем название книги на обложку
         draw_text.text(
             (5, 140),
             name_book_img,
             font=font,
             fill='rgb(240, 240, 240)')
-        # подключаем шрифт
+        # Подключаем шрифт
         font = ImageFont.truetype('./data/font/Roboto-Black.ttf', size=12)
-        # проверяем длину текста
+        # Проверяем длину текста
         if len(self.name_autor) > 14:
             name_autor_img = f"{self.name_autor[:14]}.."
         else:
             name_autor_img = self.name_autor
-        # добавляем название книги на обложку
+        # Добавляем название книги на обложку
         draw_text.text(
             (5, 160),
             name_autor_img,
             font=font,
             fill='rgb(240, 240, 240)')
-        # сохраняем
+        # Сохраняем
         path = f'./data/covers/cover{self.data["count"]}.jpg'
         im.save(path)
         self.cover_image = path

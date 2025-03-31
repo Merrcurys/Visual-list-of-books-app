@@ -4,7 +4,7 @@ from template.design import stylesheet
 import sys
 import os
 
-# отвечает за адаптивное расширение на 2-4к мониторах
+# Отвечает за адаптивное расширение на 2-4к мониторах
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 
