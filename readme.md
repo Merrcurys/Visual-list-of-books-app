@@ -66,7 +66,6 @@ pyuic5 -x name_ui.ui -o name_file.py
 # Команды для создания exe
 pip install auto-py-to-exe
 
-
 auto-py-to-exe
 # Далее откроется удобный интерфейс для создания exe
 
