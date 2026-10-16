@@ -1,4 +1,46 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
+
+
+class SettingsCard(QtWidgets.QFrame):
+    """Кликабельная карточка раздела настроек."""
+
+    clicked = QtCore.pyqtSignal()
+
+    def __init__(self, title, text, parent=None):
+        super().__init__(parent)
+        self.setObjectName("settingsCard")
+        self.setFixedSize(300, 230)
+        self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_StyledBackground, True)
+
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(26, 26, 26, 26)
+        layout.setSpacing(12)
+
+        self.Icon = QtWidgets.QLabel()
+        self.Icon.setObjectName("cardIcon")
+        self.Icon.setFixedSize(56, 56)
+        self.Icon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        self.Title = QtWidgets.QLabel(title)
+        self.Title.setObjectName("cardTitle")
+
+        self.Text = QtWidgets.QLabel(text)
+        self.Text.setObjectName("cardText")
+        self.Text.setWordWrap(True)
+        self.Text.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop
+                               | QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        layout.addWidget(self.Icon)
+        layout.addWidget(self.Title)
+        layout.addWidget(self.Text)
+        layout.addStretch()
+
+    def mouseReleaseEvent(self, event):
+        if (event.button() == QtCore.Qt.MouseButton.LeftButton
+                and self.rect().contains(event.position().toPoint())):
+            self.clicked.emit()
+        super().mouseReleaseEvent(event)
 
 
 class Ui_Form(object):
@@ -7,34 +49,55 @@ class Ui_Form(object):
         Form.setFixedSize(887, 611)
         Form.setStyleSheet("")
 
-        self.SettingsName = QtWidgets.QLabel(Form)
-        self.SettingsName.setGeometry(QtCore.QRect(390, 40, 101, 21))
-        self.SettingsName.setStyleSheet("font-size: 18px; ")
+        root = QtWidgets.QVBoxLayout(Form)
+        root.setContentsMargins(40, 36, 40, 30)
+        root.setSpacing(8)
+
+        self.SettingsName = QtWidgets.QLabel("НАСТРОЙКИ")
         self.SettingsName.setObjectName("SettingsName")
+        self.SettingsName.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        root.addWidget(self.SettingsName)
 
-        self.Import = QtWidgets.QPushButton(Form)
-        self.Import.setGeometry(QtCore.QRect(520, 240, 271, 181))
-        self.Import.setStyleSheet("background: rgb(255, 255, 255);")
-        self.Import.setObjectName("Import")
+        self.SettingsSubtitle = QtWidgets.QLabel(
+            "Сохраните библиотеку одним архивом или восстановите её из копии")
+        self.SettingsSubtitle.setObjectName("SettingsSubtitle")
+        self.SettingsSubtitle.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignHCenter)
+        root.addWidget(self.SettingsSubtitle)
 
-        self.Export = QtWidgets.QPushButton(Form)
-        self.Export.setGeometry(QtCore.QRect(100, 240, 271, 181))
-        self.Export.setStyleSheet("background: rgb(255, 255, 255);")
-        self.Export.setObjectName("Export")
+        root.addSpacing(28)
 
-        self.BackToMainButton = QtWidgets.QPushButton(Form)
-        self.BackToMainButton.setGeometry(QtCore.QRect(10, 581, 71, 20))
-        self.BackToMainButton.setStyleSheet(
-            "font-size: 12px;  background: rgb(255, 255, 255); border-radius: 5px;")
+        cards = QtWidgets.QHBoxLayout()
+        cards.setSpacing(28)
+        cards.addStretch()
+        self.ExportCard = SettingsCard(
+            "Экспорт",
+            "Сохраняет книги, цитаты и обложки в архив ZIP или в файл "
+            "базы данных SQLite для переноса на другой компьютер.")
+        self.ImportCard = SettingsCard(
+            "Импорт",
+            "Загружает библиотеку из архива ZIP или базы данных, "
+            "заменяя текущие книги и цитаты.")
+        cards.addWidget(self.ExportCard)
+        cards.addWidget(self.ImportCard)
+        cards.addStretch()
+        root.addLayout(cards)
+
+        root.addStretch()
+
+        self.BackToMainButton = QtWidgets.QPushButton("На главную")
         self.BackToMainButton.setObjectName("BackToMainButton")
+        root.addWidget(self.BackToMainButton,
+                       alignment=QtCore.Qt.AlignmentFlag.AlignLeft)
 
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Добавление книги"))
-        self.SettingsName.setText(_translate("Form", "НАСТРОЙКИ"))
-        self.Import.setText(_translate("Form", "Импорт"))
-        self.BackToMainButton.setText(_translate("Form", "Назад"))
-        self.Export.setText(_translate("Form", "Экспорт"))
+if __name__ == "__main__":
+    import sys
+    from template.design import apply_theme
+    app = QtWidgets.QApplication(sys.argv)
+    apply_theme(app)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec())

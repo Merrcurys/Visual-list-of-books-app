@@ -1,18 +1,27 @@
-from PyQt5.QtWidgets import QApplication
-from interface.shelf import FirstForm
-from template.design import stylesheet
+from PyQt6.QtCore import QLibraryInfo, QLocale, QTranslator
+from PyQt6.QtWidgets import QApplication
+from interface.main_window import MainWindow
+from template.design import apply_theme
 import sys
-import os
 
-# Отвечает за адаптивное расширение на 2-4к мониторах
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+
+def install_russian(app):
+    """Русские подписи в стандартных диалогах Qt."""
+    QLocale.setDefault(QLocale(QLocale.Language.Russian,
+                               QLocale.Country.Russia))
+    translator = QTranslator(app)
+    path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+    if translator.load("qtbase_ru", path):
+        app.installTranslator(translator)
+    return translator
 
 
 def main():
     app = QApplication(sys.argv)
-    ex = FirstForm()
-    ex.setStyleSheet(stylesheet)
-    ex.show()
+    app._translator = install_russian(app)
+    apply_theme(app)
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec())
 
 
