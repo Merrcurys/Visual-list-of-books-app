@@ -1,6 +1,4 @@
-import os
-
-from core import storage
+from core import paths, storage
 from template import icons
 from template.design import theme_color
 from template.settings_interface import Ui_Form
@@ -41,8 +39,7 @@ class SettingsPage(QWidget, Ui_Form):
 
     def export_books(self):
         """Экспорт библиотеки в архив (.zip) или базу данных (.db)."""
-        default_filename = os.path.join(
-            os.getcwd(), "book_tracker_backup.zip")
+        default_filename = str(paths.app_dir() / "book_tracker_backup.zip")
         file_name, _ = QFileDialog.getSaveFileName(
             self, "Экспорт данных", default_filename,
             "Архив ZIP (*.zip);;База данных (*.db);;Все файлы (*)")
@@ -63,7 +60,7 @@ class SettingsPage(QWidget, Ui_Form):
     def import_books(self):
         """Импорт библиотеки из архива (.zip) или базы данных (.db)."""
         file_name, _ = QFileDialog.getOpenFileName(
-            self, "Импорт данных", os.getcwd(),
+            self, "Импорт данных", str(paths.app_dir()),
             "База данных или архив (*.db *.zip);;Все файлы (*)")
 
         if not file_name:

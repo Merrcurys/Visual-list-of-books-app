@@ -2,7 +2,7 @@ import math
 import os
 from io import BytesIO
 
-from core import storage
+from core import paths, storage
 from interface.add_book import cover_image
 from template import icons
 from template.animations import HoverScale
@@ -133,7 +133,7 @@ class ShelfPage(QWidget, Ui_Form):
 
     def _cover_pixmap(self, book):
         """Картинка обложки; для отсутствующей обложки — запасная."""
-        pixmap = QPixmap(book.get("cover", ""))
+        pixmap = QPixmap(str(paths.resolve(book.get("cover", ""))))
         if not pixmap.isNull():
             return pixmap
         buffer = BytesIO()

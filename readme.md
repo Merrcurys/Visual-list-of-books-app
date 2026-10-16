@@ -1,5 +1,5 @@
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/49672b40-6a0e-4cb6-9b2d-9b3c8b56e057" alt="Project Logo" width="726">
+      <img src="https://github.com/user-attachments/assets/2124173d-6f90-414f-97e1-4f2eaaabc973" alt="Project Logo" width="726">
 </p>
 
 ## О приложении
@@ -36,7 +36,7 @@ Book Tracker - это десктопное приложение, написан�
 Приложение оформлено в современном стиле с оранжевым акцентом и поддерживает светлую и тёмную темы. По умолчанию тема берётся из настроек системы, переключить её можно кнопкой ☾/☀ на домашней странице. Выбранная тема сохраняется в базе данных.
 
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/d5a31c4f-0b79-4850-a59b-25c35b613b6a" alt="Settings" width="726">
+      <img src="https://github.com/user-attachments/assets/6d89a42a-1491-4e5a-8d44-dd6ca5855331" alt="Settings" width="726">
 </p>
 
 ## Установка

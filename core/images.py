@@ -23,6 +23,7 @@ def save_as_webp(image, destination, quality=WEBP_QUALITY):
     destination = Path(destination)
     if destination.suffix.lower() != WEBP_EXT:
         destination = destination.with_suffix(WEBP_EXT)
+    destination.parent.mkdir(parents=True, exist_ok=True)
     _normalized(image).save(destination, format="WEBP", quality=quality)
     return destination
 

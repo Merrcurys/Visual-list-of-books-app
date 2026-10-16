@@ -4,6 +4,7 @@ from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
+from core import paths
 from interface.add_book import AddBookPage
 from interface.add_quote import QuotePage
 from interface.setting import SettingsPage
@@ -14,7 +15,7 @@ from template.design import apply_theme, background_pixmap, toggle_theme
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QIcon('./data/img/favicon.png'))
+        self.setWindowIcon(QIcon(str(paths.resource("data", "img", "favicon.png"))))
         self.setFixedSize(887, 611)
 
         self.stack = QStackedWidget(self)

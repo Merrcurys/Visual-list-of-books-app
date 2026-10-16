@@ -1,17 +1,13 @@
-import os
-from pathlib import Path
-
-from core import images, storage
+from core import images, paths, storage
 from template.add_book_interface import Ui_Form
 from template.design import cover_shadow, rounded_pixmap
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
-    QWidget, QFileDialog, QGraphicsDropShadowEffect)
+    QWidget, QFileDialog, QGraphicsDropShadowEffect, QMessageBox)
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-FONT_PATH = BASE_DIR / "data" / "font" / "Roboto-Black.ttf"
+FONT_PATH = paths.resource("data", "font", "Roboto-Black.ttf")
 COVER_SIZE = (360, 540)
 
 COVER_THEMES = [
@@ -57,14 +53,22 @@ def _wrap_text(draw, text, font, max_width):
     return lines
 
 
+def _load_font(size):
+    """Шрифт обложки; если файла нет — встроенный запасной шрифт."""
+    try:
+        return ImageFont.truetype(str(FONT_PATH), size=size)
+    except OSError:
+        return ImageFont.load_default(size=size)
+
+
 def _fit_title(draw, text, max_width, max_lines):
     """Подбирает размер шрифта, чтобы заголовок влезал в max_lines строк."""
     size = 46
-    font = ImageFont.truetype(str(FONT_PATH), size=size)
+    font = _load_font(size)
     lines = _wrap_text(draw, text, font, max_width)
     while len(lines) > max_lines and size > 22:
         size -= 2
-        font = ImageFont.truetype(str(FONT_PATH), size=size)
+        font = _load_font(size)
         lines = _wrap_text(draw, text, font, max_width)
     return font, lines
 
@@ -104,7 +108,7 @@ def cover_image(name_book, name_autor):
               fill=(255, 255, 255, 120), width=2)
 
     # Автор
-    autor_font = ImageFont.truetype(str(FONT_PATH), size=22)
+    autor_font = _load_font(22)
     autor_lines = _wrap_text(
         draw, name_autor, autor_font, width - 130)[:2]
     y = divider_y + 16
@@ -158,43 +162,51 @@ class AddBookPage(QWidget, Ui_Form):
             return
         self.BookNameEdit.setText(book["name_book"])
         self.AutorNameEdit.setText(book["name_autor"])
-        if book["cover"] and os.path.isfile(book["cover"]):
-            self._show_cover(book["cover"])
-            self.cover_image = book["cover"]
+        cover = book["cover"]
+        if cover and paths.resolve(cover).is_file():
+            self._show_cover(cover)
+            self.cover_image = cover
 
     def ready_add_book(self):
         """Кнопка добавления/редактирования книги."""
-        if self.BookNameEdit.text() != "" and self.AutorNameEdit.text() != "":
-            self.name_book = self.BookNameEdit.text()
-            self.name_autor = self.AutorNameEdit.text()
+        if self.BookNameEdit.text() == "" or self.AutorNameEdit.text() == "":
+            self.ErrorText.setText("Заполните все окна!")
+            return
+        self.name_book = self.BookNameEdit.text()
+        self.name_autor = self.AutorNameEdit.text()
+        try:
             if self.book_id is not None:
                 self._update_book()
             else:
                 self._add_book()
-            self.window.show_shelf()
-        else:
-            self.ErrorText.setText("Заполните все окна!")
+        except Exception as error:
+            QMessageBox.critical(
+                self, "Ошибка", f"Не удалось сохранить книгу:\n{error}")
+            return
+        self.window.show_shelf()
 
     def _save_cover_copy(self, source, destination):
         with Image.open(source) as image:
-            images.save_as_webp(image, destination)
+            images.save_as_webp(image, paths.resolve(destination))
         return destination
 
     def _update_book(self):
         old_cover = storage.get_book(self.book_id)
         old_cover = old_cover["cover"] if old_cover else ""
         new_cover = old_cover
-        path = f'./data/covers/cover{self.book_id}.webp'
+        relative = f'./data/covers/cover{self.book_id}.webp'
 
         if not self.cover_image:
-            render_cover(self.name_book, self.name_autor, path)
-            new_cover = path
+            render_cover(self.name_book, self.name_autor,
+                         paths.resolve(relative))
+            new_cover = relative
         elif self.cover_image != old_cover:
-            new_cover = self._save_cover_copy(self.cover_image, path)
+            new_cover = self._save_cover_copy(self.cover_image, relative)
 
-        if old_cover and old_cover != new_cover and os.path.isfile(old_cover):
+        if (old_cover and old_cover != new_cover
+                and paths.resolve(old_cover).is_file()):
             try:
-                os.remove(old_cover)
+                paths.resolve(old_cover).unlink()
             except OSError:
                 pass
 
@@ -204,13 +216,14 @@ class AddBookPage(QWidget, Ui_Form):
 
     def _add_book(self):
         book_id = storage.next_book_id()
-        path = f'./data/covers/cover{book_id}.webp'
+        relative = f'./data/covers/cover{book_id}.webp'
         if self.cover_image:
-            path = self._save_cover_copy(self.cover_image, path)
+            self._save_cover_copy(self.cover_image, relative)
         else:
-            render_cover(self.name_book, self.name_autor, path)
-        self.cover_image = path
-        storage.add_book(self.name_book, self.name_autor, path,
+            render_cover(self.name_book, self.name_autor,
+                         paths.resolve(relative))
+        self.cover_image = relative
+        storage.add_book(self.name_book, self.name_autor, relative,
                          book_id=book_id)
 
     def get_cover(self):
@@ -227,7 +240,7 @@ class AddBookPage(QWidget, Ui_Form):
         """Показать обложку со скруглением и мягкой тенью."""
         self.filename = path
         pixmap = rounded_pixmap(
-            QPixmap(path),
+            QPixmap(str(paths.resolve(path))),
             (self.CoverBookLabel.width(), self.CoverBookLabel.height()),
             radius=14)
         self.CoverBookLabel.show()
@@ -245,5 +258,5 @@ class AddBookPage(QWidget, Ui_Form):
         self.AddCoverButton.style().polish(self.AddCoverButton)
 
     def on_theme_changed(self):
-        if self.cover_image and os.path.isfile(self.cover_image):
+        if self.cover_image and paths.resolve(self.cover_image).is_file():
             self._show_cover(self.cover_image)

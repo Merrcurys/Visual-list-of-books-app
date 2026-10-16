@@ -13,9 +13,9 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from . import images
+from . import images, paths
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = paths.app_dir()
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "library.db"
 COVERS_DIR = DATA_DIR / "covers"
@@ -55,6 +55,7 @@ _covers_normalized = False
 # --------------------------------------------------------------- соединение
 def _connect():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    COVERS_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
